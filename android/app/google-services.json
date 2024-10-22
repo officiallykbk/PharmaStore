@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "1037237161880",
+    "project_id": "pharmastore-29ac5",
+    "storage_bucket": "pharmastore-29ac5.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037237161880:android:08d7991879750b5b8e25ed",
+        "android_client_info": {
+          "package_name": "com.example.pharmaplus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037237161880-fajr49tel8a06k97c1lvdlk0mnhib46e.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjVGTtC3Z4EeDOWOFwcDP6wioEkVfmLQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037237161880-fajr49tel8a06k97c1lvdlk0mnhib46e.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1037237161880-5726dc63sv60katqpks4r79i6ohfc7or.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pharmaplus"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

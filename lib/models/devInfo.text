@@ -1,0 +1,22 @@
+Future
+1. Add health games to get points for free drug
+2. Add chat for support assistance
+3. Add a reward system for users to get free drug (Points)
+4. Address out of stock issues
+5. Add a product report section(goes to admin only) or comments section(goes public)
+
+#Possible app Errors
+1. When user tries to do certain stuff with no internet
+2. When user tries to do certain stuff with no account
+3. When user tries to do certain stuff with no points
+4. When user tries to buy with no drug in cart
+5. When user tries to buy with no money or no points in wallet
+6. Failed payment acknowledgement on platform
+7. When user denies platform features. eg camera
+8. Resetting certain features after processes are complete. eg wiping cart after buying, 
+                                                    done:wiping form after filling not working
+9. When there is nothing in cart using points might evaluate to negative
+10. Point button can be clicked until total is zero
+
+
+ 
