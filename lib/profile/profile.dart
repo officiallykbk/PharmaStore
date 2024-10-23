@@ -19,9 +19,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-    String avatarImage = context
-        .watch<ProfileProvider>()
-        .profileImage; // ?? Image.asset('assets/unknownPerson.png');
+    String avatarImage = context.watch<ProfileProvider>().profileImage;
     String name = context.watch<ProfileProvider>().name;
     String email = context.watch<ProfileProvider>().email;
     double Screen_width = MediaQuery.sizeOf(context).width;
@@ -56,9 +54,10 @@ class _ProfileState extends State<Profile> {
                   onPressed: () {
                     Navigator.of(context).push(MaterialPageRoute(
                         builder: (_) => EditProfile(
-                            name: name,
-                            email: email,
-                            profileImg: avatarImage)));
+                            // name: name,
+                            // email: email,
+                            // profileImg: avatarImage
+                            )));
                   },
                   style: ElevatedButton.styleFrom(
                     shape: const RoundedRectangleBorder(

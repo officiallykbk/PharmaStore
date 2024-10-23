@@ -6,16 +6,18 @@ class ProfileProvider extends ChangeNotifier {
   String _name = 'Anonymous';
   String _email = 'anon@pharmastore.com';
   String _profileImage = '';
+  int _points = 10;
   String get name => _name;
   String get email => _email;
   String get profileImage => _profileImage;
+  int get points => _points;
   setname(value) async {
     _name = value;
     var user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(user!.uid)
-        .set({'name': value});
+        .update({'name': value});
     notifyListeners();
   }
 
@@ -25,7 +27,7 @@ class ProfileProvider extends ChangeNotifier {
   //   await FirebaseFirestore.instance
   //       .collection('Users')
   //       .doc(user!.uid)
-  //       .set({'email': value});
+  //       .update({'email': value});
   //   notifyListeners();
   // }
 
@@ -35,7 +37,7 @@ class ProfileProvider extends ChangeNotifier {
     await FirebaseFirestore.instance
         .collection('Users')
         .doc(user!.uid)
-        .set({'profileImage': imageRef});
+        .update({'profileImage': imageRef});
     notifyListeners();
   }
 
@@ -50,11 +52,13 @@ class ProfileProvider extends ChangeNotifier {
         _name = snapshot.data()!['name'];
         _email = snapshot.data()!['email'];
         _profileImage = snapshot.data()!['profileImage'];
+        _points = snapshot.data()!['points'];
       } else {
         await FirebaseFirestore.instance.collection('Users').doc(user.uid).set({
           'name': details['name'],
           'email': details['email'],
           'profileImage': details['profileImage'],
+          'points': 10
         });
         _name = details['name'];
         _email = details['email'];

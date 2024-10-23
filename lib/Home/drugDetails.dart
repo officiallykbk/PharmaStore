@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:pharmaplus/Cart/cart.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 
 class drugView extends StatelessWidget {
   const drugView({super.key, this.drugModel});
@@ -16,7 +17,7 @@ class drugView extends StatelessWidget {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            icon: Icon(Icons.arrow_back_ios)),
+            icon: const Icon(Icons.arrow_back_ios)),
         actions: [
           PersistentShoppingCart().showCartItemCountWidget(
             cartItemCountWidgetBuilder: (itemCount) => IconButton(
@@ -47,25 +48,28 @@ class drugView extends StatelessWidget {
                 height: MediaQuery.of(context).size.height / 2,
                 child: Hero(
                     tag: '${drugModel['Brand_name']}',
-                    child: Image.asset('assets/pill.png'))),
+                    child: CacheImage(imageUrl: drugModel['Image_link']))),
             Padding(
-              padding: EdgeInsets.only(left: 20),
+              padding: const EdgeInsets.only(left: 20),
               child: Text(
                 drugModel['Brand_Name'],
                 style: Theme.of(context)
                     .textTheme
                     .titleLarge
-                    ?.merge(TextStyle(fontSize: 30)),
+                    ?.merge(const TextStyle(fontSize: 30)),
               ),
             ),
             Text(drugModel['description'],
                 style: Theme.of(context).textTheme.bodyLarge),
+            const SizedBox(
+              height: 200,
+            )
           ],
         ),
       ),
       bottomSheet: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         child: IntrinsicHeight(
           child: Column(
             children: [
@@ -76,18 +80,18 @@ class drugView extends StatelessWidget {
                       style: Theme.of(context)
                           .textTheme
                           .titleLarge
-                          ?.merge(TextStyle(fontSize: 30))),
+                          ?.merge(const TextStyle(fontSize: 30))),
                   TextSpan(
                       text: price.length == 1 ? '.00' : '.${price[1]}',
                       style: Theme.of(context)
                           .textTheme
                           .titleMedium
-                          ?.merge(TextStyle(fontSize: 18)))
+                          ?.merge(const TextStyle(fontSize: 18)))
                 ]),
               ),
               PersistentShoppingCart().showAndUpdateCartItemWidget(
                   inCartWidget: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     width: double.infinity,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
@@ -99,7 +103,7 @@ class drugView extends StatelessWidget {
                     ),
                   ),
                   notInCartWidget: Container(
-                    padding: EdgeInsets.symmetric(vertical: 10),
+                    padding: const EdgeInsets.symmetric(vertical: 10),
                     width: double.infinity,
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),

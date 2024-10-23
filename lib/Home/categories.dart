@@ -15,7 +15,7 @@ class Categories extends StatefulWidget {
   State<Categories> createState() => _CategoriesState();
 }
 
-List cat = ['All(A-Z)', 'Age', 'Group'];
+List cat = ['All(A-Z)', 'Price', 'Group'];
 List actions = ['Brand_Name', 'price', 'Generic_Name'];
 int selected_index = 0;
 

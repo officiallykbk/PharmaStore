@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:pharmaplus/Cart/totalsheet.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 import 'package:pharmaplus/models/resuableWidgets.dart';
 
 class Cart extends StatefulWidget {
@@ -29,8 +30,9 @@ class _CartState extends State<Cart> {
 }
 
 class CartView extends StatefulWidget {
-  final double bottomspacing;
-  const CartView({super.key, this.bottomspacing = 100});
+  const CartView({
+    super.key,
+  });
 
   @override
   State<CartView> createState() => _CartViewState();
@@ -50,11 +52,12 @@ class _CartViewState extends State<CartView> {
                         child: Padding(
                           padding: const EdgeInsets.only(top: 8.0),
                           child: ListTile(
-                            leading: Image.asset(
-                              'assets/pill.png',
-                            ),
+                            leading: Container(
+                                height: 50,
+                                width: 50,
+                                child: CacheImage(
+                                    imageUrl: data.productThumbnail!)),
                             title: Column(
-                              // mainAxisSize: MainAxisSize.min,
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
@@ -79,22 +82,6 @@ class _CartViewState extends State<CartView> {
                                     ]))
                               ],
                             ),
-                            // Text.rich(
-                            //     maxLines: 2,
-                            //     overflow: TextOverflow.ellipsis,
-                            //     TextSpan(
-                            //         text: '${data.productName}',
-                            //         style:
-                            //             Theme.of(context).textTheme.titleLarge,
-                            //         children: [
-                            //           TextSpan(
-                            //             text: '\nPrice: GH¢${data.unitPrice}',
-                            //             style: Theme.of(context)
-                            //                 .textTheme
-                            //                 .titleMedium
-                            //                 ?.merge(TextStyle(fontSize: 18)),
-                            //           )
-                            //         ])),
                             subtitle: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
@@ -155,7 +142,7 @@ class _CartViewState extends State<CartView> {
           ),
         ),
         SizedBox(
-          height: widget.bottomspacing,
+          height: 100,
         )
       ],
     );

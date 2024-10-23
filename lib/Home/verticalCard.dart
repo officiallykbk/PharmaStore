@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:pharmaplus/Home/drugDetails.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 import 'package:pharmaplus/provider/alldrugs_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 int discount = 0;
-bool isToggled = true;
 
 class verticalCard extends StatefulWidget {
   const verticalCard({super.key});
@@ -15,17 +15,6 @@ class verticalCard extends StatefulWidget {
   @override
   State<verticalCard> createState() => _verticalCardState();
 }
-//  _loader(){
-// FutureBuilder<void>(
-// future: Future.delayed(Duration(milliseconds: 100)),
-// builder: (context, snapshot) {
-//   if (snapshot.connectionState == ConnectionState.waiting) {
-//     return Center(child: CircularProgressIndicator());
-//   } else if (snapshot.hasError) {
-//     return Center(child: Text('Error loading data'));
-//   } else {}
-// )
-// }
 
 class _verticalCardState extends State<verticalCard> {
   @override
@@ -67,7 +56,9 @@ class _verticalCardState extends State<verticalCard> {
                                       transitionOnUserGestures: true,
                                       tag:
                                           '${DataModel.allData[index]['Brand_Name']}',
-                                      child: Image.asset('assets/pill.png')),
+                                      child: CacheImage(
+                                          imageUrl: DataModel.allData[index]
+                                              ['Image_link'])),
                                 ),
                                 Positioned(
                                   top: 0,
@@ -135,6 +126,8 @@ class _verticalCardState extends State<verticalCard> {
                                                 .toString(),
                                             productName: DataModel
                                                 .allData[index]['Brand_Name'],
+                                            productThumbnail: DataModel
+                                                .allData[index]['Image_link'],
                                             unitPrice: double.parse(DataModel
                                                 .allData[index]['price']
                                                 .toString()),

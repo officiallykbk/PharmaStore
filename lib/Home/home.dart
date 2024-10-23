@@ -5,17 +5,13 @@ import 'package:pharmaplus/Cart/cart.dart';
 import 'package:pharmaplus/Home/categories.dart';
 import 'package:pharmaplus/Home/searchBar.dart';
 import 'package:pharmaplus/Home/verticalCard.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 import 'package:pharmaplus/models/resuableWidgets.dart';
 import 'package:pharmaplus/profile/profile.dart';
 import 'package:pharmaplus/provider/alldrugs_provider.dart';
 
 import 'package:pharmaplus/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
-
-/*
-make reusable
-date,points and cartnumber variables are here
-*/
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -25,7 +21,7 @@ class HomePage extends StatefulWidget {
 }
 
 int n0_notifications = 0;
-int points = 10;
+
 DateTime hello = DateTime.now();
 
 // more category info in whatsappgg 'me'
@@ -65,12 +61,14 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   CircleAvatar(
                     child: ClipRRect(
-                      borderRadius: BorderRadius.circular(50),
-                      child: context.watch<ProfileProvider>().profileImage == ''
-                          ? null
-                          : Image.network(
-                              context.watch<ProfileProvider>().profileImage),
-                    ),
+                        borderRadius: BorderRadius.circular(50),
+                        child:
+                            context.watch<ProfileProvider>().profileImage == ''
+                                ? null
+                                : CacheImage(
+                                    imageUrl: context
+                                        .watch<ProfileProvider>()
+                                        .profileImage)),
                   ),
                   const SizedBox(
                     width: 15,
@@ -97,17 +95,14 @@ class _HomePageState extends State<HomePage> {
               Row(
                 children: [
                   Text.rich(TextSpan(
-                      text: "points: ",
+                      text: "Points:",
                       style: Theme.of(context).textTheme.bodyMedium,
                       children: [
                         TextSpan(
-                          text: '${points}',
+                          text: '${context.watch<ProfileProvider>().points}',
                           style: Theme.of(context).textTheme.titleMedium,
                         )
                       ])),
-                  const SizedBox(
-                    width: 15,
-                  ),
                   PersistentShoppingCart().showCartItemCountWidget(
                     cartItemCountWidgetBuilder: (itemCount) => IconButton(
                       onPressed: () {

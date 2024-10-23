@@ -4,10 +4,11 @@ Future
 3. Add a reward system for users to get free drug (Points)
 4. Address out of stock issues
 5. Add a product report section(goes to admin only) or comments section(goes public)
+6. Add profile deletion feature
 
 #Possible app Errors
 1. When user tries to do certain stuff with no internet
-2. When user tries to do certain stuff with no account
+2. When user tries to do certain stuff with no account ---complete
 3. When user tries to do certain stuff with no points
 4. When user tries to buy with no drug in cart
 5. When user tries to buy with no money or no points in wallet

@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:pharmaplus/profile/addAddress.dart';
-import 'package:pharmaplus/provider/address_provider.dart';
-import 'package:provider/provider.dart';
 
 class Address extends StatefulWidget {
   const Address({super.key});

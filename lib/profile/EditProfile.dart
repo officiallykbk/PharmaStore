@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 import 'package:pharmaplus/models/resuableWidgets.dart';
 import 'package:pharmaplus/provider/profile_provider.dart';
 import 'package:provider/provider.dart';
@@ -11,29 +12,26 @@ final name = TextEditingController();
 final email = TextEditingController();
 
 class EditProfile extends StatefulWidget {
-  final String name;
-  final String email;
-  final String profileImg;
-  const EditProfile(
-      {super.key,
-      required this.name,
-      required this.email,
-      required this.profileImg});
+  const EditProfile({
+    super.key,
+  });
 
   @override
   State<EditProfile> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+  String? imageUrl;
+
   @override
   void initState() {
     super.initState();
-    name.text = widget.name;
-    email.text = widget.email;
+    final profile = Provider.of<ProfileProvider>(context, listen: false);
+    name.text = profile.name;
+    email.text = profile.email;
   }
 
   final picker = ImagePicker();
-  String? Imageurl;
 
   Future getImageGallery(imgsource) async {
     try {
@@ -55,7 +53,8 @@ class _EditProfileState extends State<EditProfile> {
       await ref.putFile(image).whenComplete(() {
         CustomSnackBar.show(context, 'Image Uploaded', Icons.check);
       });
-      Imageurl = await ref.getDownloadURL();
+
+      imageUrl = await ref.getDownloadURL();
     } catch (e) {
       print('Failed to upload image ${e}');
       CustomSnackBar.show(context, 'Failed to Upload Image', Icons.error,
@@ -82,10 +81,11 @@ class _EditProfileState extends State<EditProfile> {
                   if (valid) {
                     Navigator.pop(context);
                     context.read<ProfileProvider>().setname(name.text);
-                    // context.read<ProfileProvider>().setemail(email.text);
-                    context.read<ProfileProvider>().setprofileImg(Imageurl);
+                    context.read<ProfileProvider>().setprofileImg(imageUrl);
                   } else {
-                    valid;
+                    CustomSnackBar.show(context,
+                        'Please ensure the information is valid', Icons.error,
+                        backgroundColor: Colors.red);
                   }
                 },
                 icon: const Icon(Icons.save_as_rounded))
@@ -110,6 +110,7 @@ class _EditProfileState extends State<EditProfile> {
                                         shape: const RoundedRectangleBorder()),
                                     onPressed: () {
                                       getImageGallery(ImageSource.gallery);
+                                      Navigator.pop(context);
                                     },
                                     child: const Text(
                                         'Select image from gallery')),
@@ -118,6 +119,7 @@ class _EditProfileState extends State<EditProfile> {
                                         shape: const RoundedRectangleBorder()),
                                     onPressed: () {
                                       getImageGallery(ImageSource.camera);
+                                      Navigator.pop(context);
                                     },
                                     child:
                                         const Text('Take image using camera'))
@@ -131,18 +133,13 @@ class _EditProfileState extends State<EditProfile> {
                   decoration: BoxDecoration(border: Border.all()),
                   width: 200,
                   height: 200,
-                  child: Imageurl != null
-                      ? Image.network(
-                          Imageurl!,
-                          fit: BoxFit.cover,
-                        )
+                  child: imageUrl != null
+                      ? CacheImage(imageUrl: imageUrl!)
                       : Stack(
                           children: [
-                            Image.network(
-                              width: 200,
-                              height: 200,
-                              widget.profileImg,
-                              fit: BoxFit.cover,
+                            CacheImage(
+                              imageUrl:
+                                  context.watch<ProfileProvider>().profileImage,
                             ),
                             const Column(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -173,7 +170,7 @@ class _EditProfileState extends State<EditProfile> {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 15.0, vertical: 15),
                       child: TextFormField(
-                        readOnly: true,
+                        // readOnly: true,
                         controller: name,
                         minLines: 1,
                         maxLines: 5,

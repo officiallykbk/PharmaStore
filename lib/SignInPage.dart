@@ -40,18 +40,6 @@ class _SignInState extends State<SignIn> {
     }
   }
 
-  // final FirebaseAuth _auth = FirebaseAuth.instance;
-  // User? _user;
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   _auth.authStateChanges().listen((event) {
-  //     setState(() {
-  //       _user = event;
-  //     });
-  //   });
-  // }
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   UserCredential? _user;
   Future<void> signInWithGoogle() async {

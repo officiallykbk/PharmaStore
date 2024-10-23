@@ -3,6 +3,8 @@ import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:pharmaplus/Cart/Checkout.dart';
 import 'package:pharmaplus/Home/home.dart';
 import 'package:pharmaplus/models/resuableWidgets.dart';
+import 'package:pharmaplus/provider/profile_provider.dart';
+import 'package:provider/provider.dart';
 
 class TotalCheckout extends StatefulWidget {
   const TotalCheckout({super.key});
@@ -16,6 +18,7 @@ bool btnVisible = true;
 class _TotalCheckoutState extends State<TotalCheckout> {
   @override
   Widget build(BuildContext context) {
+    final points = Provider.of<ProfileProvider>(context).points;
     return Container(
         padding: EdgeInsets.all(15),
         width: double.infinity,

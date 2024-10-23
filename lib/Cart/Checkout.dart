@@ -3,6 +3,7 @@ import 'package:persistent_shopping_cart/model/cart_model.dart';
 import 'package:persistent_shopping_cart/persistent_shopping_cart.dart';
 import 'package:pharmaplus/Cart/orderComplete.dart';
 import 'package:pharmaplus/models/address.dart';
+import 'package:pharmaplus/models/imageCaching.dart';
 import 'package:pharmaplus/models/order.dart';
 import 'package:pharmaplus/models/resuableWidgets.dart';
 
@@ -10,6 +11,7 @@ final _formkey = GlobalKey<FormState>();
 final name = TextEditingController();
 final phoneNO = TextEditingController();
 final GPS = TextEditingController();
+final GPSauto = TextEditingValue();
 final info = TextEditingController();
 final region = TextEditingController();
 final city = TextEditingController();
@@ -17,7 +19,7 @@ final district = TextEditingController();
 final landmark = TextEditingController();
 
 String? _selectedItem;
-List<String> _dropdownitems = [];
+List<String> _dropdownitems = ['AK-000-0000'];
 
 class Checkout extends StatelessWidget {
   const Checkout({super.key});
@@ -42,8 +44,7 @@ class Checkout extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              // const OrderSummary(),
-              const Orders(),
+              const OrderSummary(),
               const ShippingDetails(),
               const Divider(
                 indent: 10,
@@ -121,87 +122,8 @@ class Checkout extends StatelessWidget {
   }
 }
 
-class OrderSummary extends StatefulWidget {
+class OrderSummary extends StatelessWidget {
   const OrderSummary({super.key});
-
-  @override
-  State<OrderSummary> createState() => _OrderSummaryState();
-}
-
-class _OrderSummaryState extends State<OrderSummary> {
-  bool isOpened = false;
-  @override
-  Widget build(BuildContext context) {
-    Map<String, dynamic> shoppingcart = PersistentShoppingCart().getCartData();
-    List<PersistentShoppingCartItem> CartItem = shoppingcart['cartItems'];
-    return IntrinsicHeight(
-      child: Container(
-          padding: const EdgeInsets.all(10),
-          margin: const EdgeInsets.all(10),
-          decoration: BoxDecoration(border: Border.all()),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text(
-                    'Order Summary',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  Text(
-                    'Total: ${PersistentShoppingCart().calculateTotalPrice()}',
-                    style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-              const Divider(
-                indent: 10,
-                endIndent: 10,
-              ),
-              ListTile(
-                leading: SizedBox(
-                  height: 40,
-                  child: Image.asset('assets/pill.png'),
-                ),
-                title: Text(
-                  CartItem[0].productName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  'QTY: ${CartItem[0].quantity}',
-                ),
-                trailing: Text(
-                  'GH¢${double.parse(CartItem[0].unitPrice.toString()) * double.parse(CartItem[0].quantity.toString())}',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-              ),
-              const Divider(
-                indent: 10,
-                endIndent: 10,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: TextButton(
-                    style: TextButton.styleFrom(shape: const StadiumBorder()),
-                    onPressed: () {
-                      _showOrderDetailsDialog(context, CartItem);
-                    },
-                    child: const Text(
-                      'See More',
-                      style: TextStyle(fontSize: 15),
-                    )),
-              ),
-            ],
-          )),
-    );
-  }
-}
-
-class Orders extends StatelessWidget {
-  const Orders({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -245,8 +167,11 @@ class Orders extends StatelessWidget {
                             itemBuilder: (context, index) {
                               return ListTile(
                                 leading: SizedBox(
-                                  height: 40,
-                                  child: Image.asset('assets/pill.png'),
+                                  height: 50,
+                                  width: 50,
+                                  child: CacheImage(
+                                      imageUrl:
+                                          CartItem[index].productThumbnail!),
                                 ),
                                 title: Text(
                                   CartItem[index].productName,
@@ -368,58 +293,92 @@ class _ShippingDetailsState extends State<ShippingDetails> {
           ),
 
           // todo autocomplete widget
+
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 15),
-            child: TextFormField(
-              controller: GPS,
-              decoration: InputDecoration(
-                labelText: 'Ghana Post Address',
-                border: OutlineInputBorder(),
-                prefixIcon: TextButton(
-                    onPressed: () async {
-                      final Useraddress = await fetchAddress(GPS.text);
-
-                      // we are going to save the editted address AS Address instead not ghanapost address
-                      setState(() {
-                        if (Useraddress != null) {
-                          region.text = Useraddress.region;
-                          city.text = Useraddress.city;
-                          district.text = Useraddress.district;
-                          landmark.text = Useraddress.landmark;
-                          showAddress = true;
-                        } else {
-                          showAddress = false;
-                          CustomSnackBar.show(context,
-                              'Invalid Ghana Post Address', Icons.error,
-                              backgroundColor: Colors.red);
-                        }
-                      });
-                    },
-                    child: const Text('Check')),
-                suffixIcon: DropdownButton(
-                  elevation: 0,
-                  onChanged: (newValue) {
-                    setState(() {
-                      GPS.text = newValue as String;
-                    });
-                  },
-                  items: _dropdownitems.map((option) {
-                    return DropdownMenuItem(
-                      child: Text(option),
-                      value: option,
-                    );
-                  }).toList(),
-                ),
-              ),
-              validator: (value) {
-                if (value!.isEmpty && showAddress == false) {
-                  return 'Field can not be empty.\nEnter AK-000-0000, check and fill popup form below';
-                } else {
-                  return null;
+            child: Autocomplete<String>(
+              optionsBuilder: (GPSauto) {
+                if (GPSauto.text.isEmpty) {
+                  return const Iterable<String>.empty();
                 }
+                return _dropdownitems.where((String option) {
+                  return option
+                      .toLowerCase()
+                      .contains(GPSauto.text.toLowerCase());
+                });
+              },
+              onSelected: (String selection) {
+                print('You selected: $selection');
+              },
+              fieldViewBuilder: (BuildContext context, GPS, FocusNode focusNode,
+                  VoidCallback onFieldSubmitted) {
+                return TextFormField(
+                  controller: GPS,
+                  focusNode: focusNode,
+                  decoration: InputDecoration(
+                    labelText: 'Ghana Post Address',
+                    border: OutlineInputBorder(),
+                    suffix: TextButton(
+                        onPressed: () async {
+                          final Useraddress = await fetchAddress(GPS.text);
+
+                          setState(() {
+                            if (Useraddress != null) {
+                              region.text = Useraddress.region;
+                              city.text = Useraddress.city;
+                              district.text = Useraddress.district;
+                              landmark.text = Useraddress.landmark;
+                              showAddress = true;
+                            } else {
+                              showAddress = false;
+                              CustomSnackBar.show(context,
+                                  'Invalid Ghana Post Address', Icons.error,
+                                  backgroundColor: Colors.red);
+                            }
+                          });
+                        },
+                        child: const Text('Check')),
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty && showAddress == false) {
+                      return 'Field can not be empty.\nEnter AK-000-0000, check and fill popup form below';
+                    } else {
+                      return null;
+                    }
+                  },
+                );
+              },
+              optionsViewBuilder: (BuildContext context,
+                  AutocompleteOnSelected<String> onSelected,
+                  Iterable<String> options) {
+                return Align(
+                  alignment: Alignment.topLeft,
+                  child: Material(
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.9,
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(8.0),
+                        itemCount: options.length,
+                        itemBuilder: (BuildContext context, int index) {
+                          final String option = options.elementAt(index);
+                          return GestureDetector(
+                            onTap: () {
+                              onSelected(option);
+                              _selectedItem = option;
+                            },
+                            child: ListTile(
+                              title: Text(option),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                );
               },
             ),
           ),
+
           Visibility(
               visible: showAddress,
               child: Column(
@@ -480,66 +439,10 @@ class _ShippingDetailsState extends State<ShippingDetails> {
                 labelText: 'Additional Information',
                 border: OutlineInputBorder(),
               ),
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'Field can not be empty';
-                } else {
-                  return null;
-                }
-              },
             ),
           ),
         ],
       ),
     );
   }
-}
-
-void _showOrderDetailsDialog(
-    BuildContext context, List<PersistentShoppingCartItem> CartItem) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Order Details'),
-        content: SizedBox(
-          height: 300, // Set a fixed height for the dialog box
-          width: double.maxFinite,
-          child: ListView.builder(
-            itemCount: CartItem.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                leading: SizedBox(
-                  height: 40,
-                  child: Image.asset('assets/pill.png'),
-                ),
-                title: Text(
-                  CartItem[index].productName,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                subtitle: Text(
-                  'QTY: ${CartItem[index].quantity}\tTotal: ${double.parse(CartItem[index].unitPrice.toString()) * double.parse(CartItem[index].quantity.toString())}',
-                ),
-              );
-            },
-          ),
-        ),
-        actions: [
-          Center(
-            child: Text(
-              'GH¢${PersistentShoppingCart().calculateTotalPrice()}',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Close'),
-          ),
-        ],
-      );
-    },
-  );
 }
